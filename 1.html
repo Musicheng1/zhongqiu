@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>中秋快乐 · 花好月圆</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    position: relative;
+    background: radial-gradient(ellipse at 50% 110%, #2b2050 0%, #15112f 45%, #05050d 100%);
+    font-family: "STKaiti", "KaiTi", "Kaiti SC", "Songti SC", "SimSun", serif;
+    color: #fff;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ============ 星空 ============ */
+  #stars { position: absolute; inset: 0; overflow: hidden; }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    animation: twinkle var(--d) ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    from { opacity: .12; transform: scale(.6); }
+    to   { opacity: 1;   transform: scale(1); }
+  }
+
+  /* ============ 云 ============ */
+  .cloud {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center,
+                rgba(200, 205, 255, .50) 0%,
+                rgba(150, 160, 220, .14) 58%,
+                transparent 72%);
+    filter: blur(14px);
+    animation: drift linear infinite;
+    pointer-events: none;
+  }
+  @keyframes drift {
+    from { transform: translateX(-45vw); }
+    to   { transform: translateX(145vw); }
+  }
+
+  /* ============ 月亮 ============ */
+  .moon-wrap {
+    position: absolute;
+    top: 9%;
+    right: 12%;
+    width: clamp(96px, 14vw, 180px);
+    aspect-ratio: 1;
+    z-index: 2;
+    transition: transform .6s cubic-bezier(.2,.8,.2,1);
+    will-change: transform;
+  }
+  .moon-wrap::before {           /* 外围光晕 */
+    content: "";
+    position: absolute;
+    inset: -50%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,230,160,.20), transparent 65%);
+    animation: halo 6s ease-in-out infinite;
+  }
+  @keyframes halo {
+    0%,100% { opacity: .7; transform: scale(1); }
+    50%     { opacity: 1;  transform: scale(1.08); }
+  }
+  .moon {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 34% 30%,
+                #fffef5 0%, #fff6cf 35%, #ffe79a 62%, #f3cd63 100%);
+    box-shadow:
+      0 0 30px  rgba(255,244,200,.95),
+      0 0 70px  rgba(255,224,150,.70),
+      0 0 140px rgba(255,200,110,.45),
+      0 0 260px rgba(255,180,90,.25);
+    animation: moonPulse 5s ease-in-out infinite, floatY 8s ease-in-out infinite;
+  }
+  .moon::before {                /* 月面环形山 */
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 68% 62%, rgba(205,175,105,.34) 0 12%, transparent 13%),
+      radial-gradient(circle at 40% 71%, rgba(205,175,105,.26) 0 9%,  transparent 10%),
+      radial-gradient(circle at 62% 30%, rgba(205,175,105,.22) 0 7%,  transparent 8%),
+      radial-gradient(circle at 26% 46%, rgba(205,175,105,.18) 0 6%,  transparent 7%);
+  }
+  @keyframes moonPulse {
+    0%,100% {
+      box-shadow: 0 0 30px rgba(255,244,200,.95), 0 0 70px rgba(255,224,150,.70),
+                  0 0 140px rgba(255,200,110,.45), 0 0 260px rgba(255,180,90,.25);
+    }
+    50% {
+      box-shadow: 0 0 42px rgba(255,248,220,1), 0 0 105px rgba(255,230,160,.85),
+                  0 0 195px rgba(255,205,120,.55), 0 0 330px rgba(255,185,95,.32);
+    }
+  }
+  @keyframes floatY {
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(-13px); }
+  }
+
+  /* ============ 远山剪影 ============ */
+  .mountains {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 28vh;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(22,19,48,.92), #06060e 78%);
+    clip-path: polygon(0% 100%, 0% 62%, 7% 49%, 15% 61%, 24% 37%, 33% 56%,
+                       42% 29%, 52% 53%, 62% 33%, 72% 57%, 82% 41%,
+                       92% 59%, 100% 45%, 100% 100%);
+    pointer-events: none;
+  }
+
+    /* ============ 孔明灯 ============ */
+  .lantern {
+    position: absolute;
+    bottom: -120px;
+    width: 22px;
+    height: 30px;
+    z-index: 3;
+    border-radius: 50% 50% 42% 42% / 60% 60% 42% 42%;
+    background: radial-gradient(circle at 50% 76%,
+                #fff3bd 0%, #ffc964 38%, #ff9b3d 70%, #e8762a 100%);
+    box-shadow: 0 0 14px rgba(255,180,80,.9), 0 0 36px rgba(255,140,50,.55);
+    animation-name: flyUp;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+  .lantern::after {              /* 灯下火苗 */
+    content: "";
+    position: absolute;
+    left: 50%; bottom: -5px;
+    width: 6px; height: 8px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff8d0, #ffb347 58%, transparent 72%);
+    filter: blur(1px);
+  }
+  @keyframes flyUp {
+    0%   { transform: translate3d(0, 0, 0) scale(var(--s)); opacity: 0; }
+    8%   { opacity: 1; }
+    85%  { opacity: .85; }
+    100% { transform: translate3d(var(--dx), calc(-100vh - 220px), 0) scale(var(--s));
+           opacity: 0; }
+  }
+
+  /* ============ 文字内容 ============ */
+  .content {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    pointer-events: none;   /* 让点击穿透，方便放灯 */
+  }
+
+  .title {
+    font-size: clamp(2.6rem, 10.5vw, 7rem);
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-indent: .12em;
+    line-height: 1.15;
+    background: linear-gradient(180deg, #fffdf2 0%, #ffeaa8 46%, #f0b93f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 18px rgba(255,215,130,.55))
+            drop-shadow(0 0 48px rgba(255,180,80,.35));
+    animation: rise 1.5s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  .divider {
+    width: min(340px, 60vw);
+    height: 1px;
+    margin-top: 26px;
+    position: relative;
+    background: linear-gradient(90deg, transparent, rgba(255,215,130,.8), transparent);
+    animation: rise 1.5s .18s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .divider::after {
+    content: "";
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 7px; height: 7px;
+    transform: translate(-50%, -50%) rotate(45deg);
+    background: #ffe6a3;
+    box-shadow: 0 0 12px rgba(255,220,140,.95);
+  }
+
+  .poem {
+    margin-top: 26px;
+    font-size: clamp(.95rem, 2.7vw, 1.5rem);
+    letter-spacing: .34em;
+    text-indent: .34em;
+    color: rgba(255,242,208,.9);
+    text-shadow: 0 0 14px rgba(255,210,120,.55);
+    animation: rise 1.5s .3s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  .wish {
+    margin-top: 30px;
+    font-size: clamp(.82rem, 2.1vw, 1.1rem);
+    line-height: 2.1;
+    letter-spacing: .16em;
+    color: rgba(224,220,255,.72);
+    animation: rise 1.5s .5s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  .tip {
+    margin-top: clamp(30px, 7vh, 64px);
+    font-size: clamp(.7rem, 1.8vw, .85rem);
+    letter-spacing: .26em;
+    text-indent: .26em;
+    color: rgba(196,192,232,.48);
+    animation: rise 1.5s .72s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============ 移动端 ============ */
+  @media (max-width: 600px) {
+    .moon-wrap { top: 6%; right: 8%; }
+    .mountains { height: 22vh; }
+    .wish { letter-spacing: .1em; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- 星空 -->
+  <div id="stars"></div>
+
+  <!-- 云层 -->
+  <div id="clouds"></div>
+
+  <!-- 月亮 -->
+  <div class="moon-wrap" id="moonWrap">
+    <div class="moon"></div>
+  </div>
+
+  <!-- 远山 -->
+  <div class="mountains"></div>
+
+  <!-- 文字 -->
+  <main class="content">
+    <h1 class="title">中秋快乐</h1>
+    <div class="divider"></div>
+    <p class="poem">海上生明月 · 天涯共此时</p>
+    <p class="wish">
+      愿花好月圆人长久<br>
+      愿你与所爱之人，共赏一轮明月
+    </p>
+    <p class="tip">轻触屏幕，放飞一盏孔明灯 ✨</p>
+  </main>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- 生成星星 ---------- */
+  const starsBox = document.getElementById('stars');
+  const starFrag = document.createDocumentFragment();
+  const STAR_COUNT = window.innerWidth < 600 ? 90 : 170;
+
+  for (let i = 0; i < STAR_COUNT; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = (Math.random() * 2.2 + 0.6).toFixed(2);
+    s.style.width  = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left   = (Math.random() * 100).toFixed(2) + '%';
+    s.style.top    = (Math.random() * 88).toFixed(2) + '%';
+    s.style.setProperty('--d', (1.4 + Math.random() * 3.2).toFixed(2) + 's');
+    s.style.animationDelay = (Math.random() * 4).toFixed(2) + 's';
+    starFrag.appendChild(s);
+  }
+  starsBox.appendChild(starFrag);
+
+  /* ---------- 生成云 ---------- */
+  const cloudsBox = document.getElementById('clouds');
+  const cloudCfg = [
+    { top: 12, w: 560, h: 150, dur: 95,  delay: -20 },
+    { top: 26, w: 420, h: 120, dur: 78,  delay: -55 },
+    { top: 44, w: 680, h: 180, dur: 120, delay: -30 },
+    { top: 62, w: 480, h: 130, dur: 88,  delay: -70 },
+    { top: 78, w: 600, h: 160, dur: 105, delay: -10 }
+  ];
+
+  cloudCfg.forEach(function (c) {
+    const el = document.createElement('div');
+    el.className = 'cloud';
+    el.style.top = c.top + '%';
+    el.style.width = c.w + 'px';
+    el.style.height = c.h + 'px';
+    el.style.animationDuration = c.dur + 's';
+    el.style.animationDelay = c.delay + 's';
+    cloudsBox.appendChild(el);
+  });
+
+  /* ---------- 放飞孔明灯 ---------- */
+  const MAX_LANTERNS = 26;
+  let lanternCount = 0;
+
+  function spawnLantern(x) {
+    if (lanternCount >= MAX_LANTERNS) return;
+    lanternCount++;
+
+    const l = document.createElement('div');
+    l.className = 'lantern';
+
+    const scale = (0.65 + Math.random() * 0.95).toFixed(2);
+    const dur   = (9 + Math.random() * 8).toFixed(2);      // 9 ~ 17 秒
+    const posX  = (x !== undefined && x !== null)
+                    ? x
+                    : Math.random() * window.innerWidth;
+
+    l.style.left = posX + 'px';
+    l.style.animationDuration = dur + 's';
+    l.style.setProperty('--s', scale);
+    l.style.setProperty('--dx', (Math.random() * 140 - 70).toFixed(0) + 'px');
+
+    document.body.appendChild(l);
+
+    setTimeout(function () {
+      if (l.parentNode) l.parentNode.removeChild(l);
+      lanternCount--;
+    }, dur * 1000 + 200);
+  }
+
+  // 点击 / 触摸放灯
+  document.addEventListener('click', function (e) {
+    spawnLantern(e.clientX);
+    // 随机再补一盏，营造成片升起的感觉
+    if (Math.random() > 0.45) {
+      setTimeout(function () { spawnLantern(e.clientX + (Math.random() * 160 - 80)); }, 180);
+    }
+  });
+
+  // 自动放灯
+  function autoLoop() {
+    spawnLantern();
+    setTimeout(autoLoop, 1400 + Math.random() * 2200);
+  }
+  setTimeout(autoLoop, 900);
+
+  // 开场先来几盏
+  for (let i = 0; i < 4; i++) {
+    setTimeout(function () { spawnLantern(); }, i * 380);
+  }
+
+  /* ---------- 月亮视差 ---------- */
+  const moonWrap = document.getElementById('moonWrap');
+  let rafId = null;
+
+  window.addEventListener('mousemove', function (e) {
+    if (rafId) return;
+    rafId = requestAnimationFrame(function () {
+      const nx = (e.clientX / window.innerWidth  - 0.5);
+      const ny = (e.clientY / window.innerHeight - 0.5);
+      moonWrap.style.transform = 'translate(' + (nx * 26).toFixed(2) + 'px, ' +
+                                              (ny * 18).toFixed(2) + 'px)';
+      rafId = null;
+    });
+  });
+
+    /* ---------- 窗口变化时清理 ---------- */
+  window.addEventListener('resize', function () {
+    // 防止 resize 时灯笼堆叠在视口外，简单清理一下
+    document.querySelectorAll('.lantern').forEach(function (el) {
+      if (parseFloat(el.style.left) > window.innerWidth + 100) {
+        el.remove();
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
